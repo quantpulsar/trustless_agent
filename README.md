@@ -130,4 +130,4 @@ This project uses Solidity ^0.8.20. To get started with development:
 
 ## License
 
-The code in this repository is licensed under the [CC0-1.0 License](LICENSE).
+The code in this repository is licensed under the [Apache-2.0 License](LICENSE).
