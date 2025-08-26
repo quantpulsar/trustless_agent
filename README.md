@@ -117,7 +117,7 @@ For a deeper dive into the architecture, see the [Implementation Guide](./docs/I
 
 ## Development
 
-This project uses Solidity ^0.8.20. To get started with development:
+This project uses Solidity ^0.8.30. To get started with development:
 
 1.  **Clone the repository:**
     ```sh
