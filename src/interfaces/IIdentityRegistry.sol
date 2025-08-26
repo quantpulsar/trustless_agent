@@ -42,7 +42,7 @@ interface IIdentityRegistry {
      * @param agentAddress The EVM address that will control this agent's identity.
      * @return agentId The newly assigned unique ID for the agent.
      */
-    function New(string calldata agentDomain, address agentAddress) external returns (uint256 agentId);
+    function registerAgent(string calldata agentDomain, address agentAddress) external returns (uint256 agentId);
 
     /**
      * @dev Updates an existing agent's details. The transaction sender MUST be the current `AgentAddress`.
@@ -51,26 +51,30 @@ interface IIdentityRegistry {
      * @param newAgentAddress The new controlling address. If address(0), the address is not changed.
      * @return success A boolean indicating if the update was successful.
      */
-    function Update(uint256 agentId, string calldata newAgentDomain, address newAgentAddress) external returns (bool success);
+    function updateAgent(
+        uint256 agentId,
+        string calldata newAgentDomain,
+        address newAgentAddress
+    ) external returns (bool success);
 
     /**
      * @dev Retrieves an agent's details by its ID.
      * @param agentId The ID of the agent.
      * @return The agent's ID, domain, and address.
      */
-    function Get(uint256 agentId) external view returns (uint256, string memory, address);
+    function getAgent(uint256 agentId) external view returns (uint256, string memory, address);
 
     /**
      * @dev Resolves an agent's details by its domain.
      * @param agentDomain The domain of the agent.
      * @return The agent's ID, domain, and address.
      */
-    function ResolveByDomain(string calldata agentDomain) external view returns (uint256, string memory, address);
+    function resolveByDomain(string calldata agentDomain) external view returns (uint256, string memory, address);
 
     /**
      * @dev Resolves an agent's details by its address.
      * @param agentAddress The address of the agent.
      * @return The agent's ID, domain, and address.
      */
-    function ResolveByAddress(address agentAddress) external view returns (uint256, string memory, address);
+    function resolveByAddress(address agentAddress) external view returns (uint256, string memory, address);
 }

@@ -32,7 +32,7 @@ interface IValidationRegistry {
      * @param agentServerId The ID of the server agent that performed the task.
      * @param dataHash A commitment hash of the off-chain task input and output.
      */
-    function ValidationRequest(uint256 agentValidatorId, uint256 agentServerId, bytes32 dataHash) external;
+    function requestValidation(uint256 agentValidatorId, uint256 agentServerId, bytes32 dataHash) external;
 
     /**
      * @dev Submits a response to a pending validation request.
@@ -40,5 +40,5 @@ interface IValidationRegistry {
      * @param dataHash The hash corresponding to the validation request.
      * @param response The validation result, an integer where 0 <= response <= 100.
      */
-    function ValidationResponse(bytes32 dataHash, uint8 response) external;
+    function submitValidationResponse(bytes32 dataHash, uint8 response) external;
 }

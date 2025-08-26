@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 pragma solidity ^0.8.30;
 
-import "./interfaces/IReputationRegistry.sol";
+import {IReputationRegistry} from "./interfaces/IReputationRegistry.sol";
 
 /**
  * @title ReputationRegistry
@@ -21,10 +21,20 @@ contract ReputationRegistry is IReputationRegistry {
     constructor() {}
 
     /// @inheritdoc IReputationRegistry
-    function AcceptFeedback(uint256 agentClientId, uint256 agentServerId) external {
+    function acceptFeedback(uint256 agentClientId, uint256 agentServerId) external {
         _feedbackAuthCounter++;
-        bytes32 feedbackAuthId = keccak256(abi.encodePacked(block.chainid, address(this), _feedbackAuthCounter));
-        
+        uint256 counter = _feedbackAuthCounter;
+        bytes32 feedbackAuthId;
+        assembly {
+            // Store data in scratch space to prepare for hashing.
+            // This is more gas-efficient than abi.encodePacked.
+            mstore(0x00, chainid())
+            mstore(0x20, address())
+            mstore(0x40, counter)
+            // Hash 96 bytes (3 words) from scratch space.
+            feedbackAuthId := keccak256(0x00, 0x60)
+        }
+
         emit AuthFeedback(agentClientId, agentServerId, feedbackAuthId);
     }
 }

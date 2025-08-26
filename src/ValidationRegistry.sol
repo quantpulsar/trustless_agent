@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: Apache-2.0
 pragma solidity ^0.8.30;
 
-import "./interfaces/IValidationRegistry.sol";
-import "./interfaces/IIdentityRegistry.sol";
+import {IValidationRegistry} from "./interfaces/IValidationRegistry.sol";
+import {IIdentityRegistry} from "./interfaces/IIdentityRegistry.sol";
 
 /**
  * @title ValidationRegistry
@@ -13,7 +13,7 @@ contract ValidationRegistry is IValidationRegistry {
     // The duration for which a validation request remains pending (e.g., 1 hour).
     uint256 public constant PENDING_REQUEST_TTL = 3600;
 
-    IIdentityRegistry public immutable identityRegistry;
+    IIdentityRegistry public immutable IDENTITY_REGISTRY;
 
     struct PendingValidation {
         uint256 agentValidatorId;
@@ -30,11 +30,11 @@ contract ValidationRegistry is IValidationRegistry {
      */
     constructor(address _identityRegistryAddress) {
         require(_identityRegistryAddress != address(0), "ValidationRegistry: Invalid registry address");
-        identityRegistry = IIdentityRegistry(_identityRegistryAddress);
+        IDENTITY_REGISTRY = IIdentityRegistry(_identityRegistryAddress);
     }
 
     /// @inheritdoc IValidationRegistry
-    function ValidationRequest(uint256 agentValidatorId, uint256 agentServerId, bytes32 dataHash) external {
+    function requestValidation(uint256 agentValidatorId, uint256 agentServerId, bytes32 dataHash) external {
         // Ensure the request does not already exist to prevent overwrites
         require(pendingRequests[dataHash].expirationTimestamp == 0, "ValidationRegistry: Request already exists");
         
@@ -48,7 +48,7 @@ contract ValidationRegistry is IValidationRegistry {
     }
 
     /// @inheritdoc IValidationRegistry
-    function ValidationResponse(bytes32 dataHash, uint8 response) external {
+    function submitValidationResponse(bytes32 dataHash, uint8 response) external {
         PendingValidation storage request = pendingRequests[dataHash];
         
         require(request.expirationTimestamp != 0, "ValidationRegistry: Request does not exist");
@@ -56,7 +56,7 @@ contract ValidationRegistry is IValidationRegistry {
         require(response <= 100, "ValidationRegistry: Response must be between 0 and 100");
 
         // Resolve the validator's address from the IdentityRegistry
-        (,, address validatorAddress) = identityRegistry.Get(request.agentValidatorId);
+        (,, address validatorAddress) = IDENTITY_REGISTRY.getAgent(request.agentValidatorId);
         require(validatorAddress != address(0), "ValidationRegistry: Validator not found in registry");
         
         // Ensure the caller is the designated validator

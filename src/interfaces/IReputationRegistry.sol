@@ -22,5 +22,5 @@ interface IReputationRegistry {
      * @param agentClientId The ID of the client agent.
      * @param agentServerId The ID of the server agent.
      */
-    function AcceptFeedback(uint256 agentClientId, uint256 agentServerId) external;
+    function acceptFeedback(uint256 agentClientId, uint256 agentServerId) external;
 }

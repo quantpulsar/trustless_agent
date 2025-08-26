@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 pragma solidity ^0.8.30;
 
-import "./interfaces/IIdentityRegistry.sol";
+import {IIdentityRegistry} from "./interfaces/IIdentityRegistry.sol";
 
 /**
  * @title IdentityRegistry
@@ -16,7 +16,7 @@ contract IdentityRegistry is IIdentityRegistry {
     mapping(address => uint256) private _addressToAgentId;
 
     /// @inheritdoc IIdentityRegistry
-    function New(string calldata agentDomain, address agentAddress) external returns (uint256 agentId) {
+    function registerAgent(string calldata agentDomain, address agentAddress) external returns (uint256 agentId) {
         require(bytes(agentDomain).length > 0, "IdentityRegistry: Domain cannot be empty");
         require(agentAddress != address(0), "IdentityRegistry: Address cannot be zero");
         require(_addressToAgentId[agentAddress] == 0, "IdentityRegistry: Address already registered");
@@ -34,7 +34,11 @@ contract IdentityRegistry is IIdentityRegistry {
     }
 
     /// @inheritdoc IIdentityRegistry
-    function Update(uint256 agentId, string calldata newAgentDomain, address newAgentAddress) external returns (bool success) {
+    function updateAgent(
+        uint256 agentId,
+        string calldata newAgentDomain,
+        address newAgentAddress
+    ) external returns (bool success) {
         Agent storage agent = _agents[agentId];
         require(agent.id != 0, "IdentityRegistry: Agent does not exist");
         require(msg.sender == agent.owner, "IdentityRegistry: Not authorized");
@@ -60,20 +64,20 @@ contract IdentityRegistry is IIdentityRegistry {
     }
 
     /// @inheritdoc IIdentityRegistry
-    function Get(uint256 agentId) external view returns (uint256, string memory, address) {
+    function getAgent(uint256 agentId) external view returns (uint256, string memory, address) {
         Agent storage agent = _agents[agentId];
         return (agent.id, agent.domain, agent.owner);
     }
 
     /// @inheritdoc IIdentityRegistry
-    function ResolveByDomain(string calldata agentDomain) external view returns (uint256, string memory, address) {
+    function resolveByDomain(string calldata agentDomain) external view returns (uint256, string memory, address) {
         uint256 agentId = _domainToAgentId[agentDomain];
         Agent storage agent = _agents[agentId];
         return (agent.id, agent.domain, agent.owner);
     }
 
     /// @inheritdoc IIdentityRegistry
-    function ResolveByAddress(address agentAddress) external view returns (uint256, string memory, address) {
+    function resolveByAddress(address agentAddress) external view returns (uint256, string memory, address) {
         uint256 agentId = _addressToAgentId[agentAddress];
         Agent storage agent = _agents[agentId];
         return (agent.id, agent.domain, agent.owner);
