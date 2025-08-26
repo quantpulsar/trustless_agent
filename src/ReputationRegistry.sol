@@ -5,7 +5,7 @@ import "./interfaces/IReputationRegistry.sol";
 
 /**
  * @title ReputationRegistry
- * @author ERC-8004 Authors
+ * @author ERC-8004 Authors, azanux
  * @dev Concrete implementation of the ERC-8004 Reputation Registry.
  * This contract is intentionally lightweight to minimize on-chain costs.
  */

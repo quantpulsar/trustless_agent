@@ -3,7 +3,7 @@ pragma solidity ^0.8.20;
 
 /**
  * @title IReputationRegistry
- * @author ERC-8004 Authors
+ * @author ERC-8004 Authors, azanux
  * @dev Interface for the ERC-8004 Reputation Registry.
  * A lightweight entry point for authorizing task feedback between agents.
  */

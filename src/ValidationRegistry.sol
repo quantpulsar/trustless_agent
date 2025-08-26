@@ -6,7 +6,7 @@ import "./interfaces/IIdentityRegistry.sol";
 
 /**
  * @title ValidationRegistry
- * @author ERC-8004 Authors
+ * @author ERC-8004 Authors, azanux
  * @dev Concrete implementation of the ERC-8004 Validation Registry.
  */
 contract ValidationRegistry is IValidationRegistry {

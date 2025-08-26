@@ -5,7 +5,7 @@ import "./interfaces/IIdentityRegistry.sol";
 
 /**
  * @title IdentityRegistry
- * @author ERC-8004 Authors
+ * @author ERC-8004 Authors, azanux
  * @dev Concrete implementation of the ERC-8004 Identity Registry.
  */
 contract IdentityRegistry is IIdentityRegistry {

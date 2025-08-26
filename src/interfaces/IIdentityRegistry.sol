@@ -3,7 +3,7 @@ pragma solidity ^0.8.20;
 
 /**
  * @title IIdentityRegistry
- * @author ERC-8004 Authors
+ * @author ERC-8004 Authors, azanux
  * @dev Interface for the ERC-8004 Identity Registry.
  * Manages agent identities, providing a single on-chain entry point for registration and discovery.
  */

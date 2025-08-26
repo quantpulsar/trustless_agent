@@ -3,7 +3,7 @@ pragma solidity ^0.8.20;
 
 /**
  * @title IValidationRegistry
- * @author ERC-8004 Authors
+ * @author ERC-8004 Authors, azanux
  * @dev Interface for the ERC-8004 Validation Registry.
  * Provides generic hooks for requesting and recording independent task validations.
  */
