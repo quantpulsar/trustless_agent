@@ -6,12 +6,16 @@ pragma solidity ^0.8.30;
  * @author ERC-8004 Authors, azanux
  * @dev Interface for the ERC-8004 Identity Registry.
  * Manages agent identities, providing a single on-chain entry point for registration and discovery.
+ * 
+ * AgentDomain Requirements:
+ * Following RFC 8615 principles, an Agent Card MUST be available at https://{AgentDomain}/.well-known/agent-card.json
  */
 interface IIdentityRegistry {
     /**
      * @dev Represents a registered agent.
      * @param id The unique, global identifier for the agent (AgentID).
      * @param domain The domain where the agent's AgentCard can be found (AgentDomain).
+     *               Following RFC 8615 principles, Agent Card MUST be available at https://{domain}/.well-known/agent-card.json
      * @param owner The EVM-compatible address controlling the agent (AgentAddress).
      */
     struct Agent {
@@ -38,16 +42,20 @@ interface IIdentityRegistry {
 
     /**
      * @dev Registers a new agent. The transaction sender MUST be the agent's address.
+     * Corresponds to New(AgentDomain, AgentAddress) → AgentID in ERC-8004 spec.
      * @param agentDomain The domain name for discovering the agent's off-chain AgentCard.
+     *                    Following RFC 8615 principles, Agent Card MUST be available at https://{agentDomain}/.well-known/agent-card.json
      * @param agentAddress The EVM address that will control this agent's identity.
      * @return agentId The newly assigned unique ID for the agent.
      */
-    function registerAgent(string calldata agentDomain, address agentAddress) external returns (uint256 agentId);
+    function newAgent(string calldata agentDomain, address agentAddress) external returns (uint256 agentId);
 
     /**
      * @dev Updates an existing agent's details. The transaction sender MUST be the current `AgentAddress`.
+     * Corresponds to Update(AgentID, Optional NewAgentDomain, Optional NewAgentAddress) → Boolean in ERC-8004 spec.
      * @param agentId The ID of the agent to update.
      * @param newAgentDomain The new domain. If empty, the domain is not changed.
+     *                       Following RFC 8615 principles, Agent Card MUST be available at https://{newAgentDomain}/.well-known/agent-card.json
      * @param newAgentAddress The new controlling address. If address(0), the address is not changed.
      * @return success A boolean indicating if the update was successful.
      */
@@ -59,6 +67,7 @@ interface IIdentityRegistry {
 
     /**
      * @dev Retrieves an agent's details by its ID.
+     * Corresponds to Get(AgentID) → AgentID, AgentDomain, AgentAddress in ERC-8004 spec.
      * @param agentId The ID of the agent.
      * @return The agent's ID, domain, and address.
      */
@@ -66,13 +75,15 @@ interface IIdentityRegistry {
 
     /**
      * @dev Resolves an agent's details by its domain.
-     * @param agentDomain The domain of the agent.
+     * Corresponds to ResolveByDomain(AgentDomain) → AgentID, AgentDomain, AgentAddress in ERC-8004 spec.
+     * @param agentDomain The domain of the agent. Agent Card is available at https://{agentDomain}/.well-known/agent-card.json
      * @return The agent's ID, domain, and address.
      */
     function resolveByDomain(string calldata agentDomain) external view returns (uint256, string memory, address);
 
     /**
      * @dev Resolves an agent's details by its address.
+     * Corresponds to ResolveByAddress(AgentAddress) → AgentID, AgentDomain, AgentAddress in ERC-8004 spec.
      * @param agentAddress The address of the agent.
      * @return The agent's ID, domain, and address.
      */

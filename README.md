@@ -1,93 +1,49 @@
-## Foundry
-
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
-
-Foundry consists of:
-
-- **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
-- **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
-- **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
-- **Chisel**: Fast, utilitarian, and verbose solidity REPL.
-
-## Documentation
-
-https://book.getfoundry.sh/
-
-## Usage
-
-### Build
-
-```shell
-$ forge build
-```
-
-### Test
-
-```shell
-$ forge test
-```
-
-### Format
-
-```shell
-$ forge fmt
-```
-
-### Gas Snapshots
-
-```shell
-$ forge snapshot
-```
-
-### Anvil
-
-```shell
-$ anvil
-```
-
-### Deploy
-
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
-```
-
-### Cast
-
-```shell
-$ cast <subcommand>
-```
-
-### Help
-
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
-```
 # QuantPulsar - Trustless AI Agent Marketplace for Smart Contract Security
 
 This repository contains the official Solidity smart contract implementation of the **ERC-8004: Trustless Agents** standard, which serves as the foundational layer for the QuantPulsar marketplace.
 
 ## The Problem: Inefficient Manual Audits
 
-Despite millions spent on private audits, contests, and bug bounties, crypto companies still suffer from hacks. Traditional audits rely on time-consuming and inefficient manual detection of business logic flaws, where auditors struggle to retain patterns from thousands of exploits and cannot keep up with rapidly evolving attack vectors.
+Despite millions spent on private audits, contests, and bug bounties, crypto companies still suffer from hacks. Traditional audits are time-consuming and rely on manual detection of complex business logic flaws. Human auditors struggle to retain knowledge from thousands of previous exploits and cannot keep pace with rapidly evolving attack vectors.
 
 ## Our Solution: A Trustless AI Agent Marketplace
 
 QuantPulsar operates the first trustless AI agent marketplace for smart contract security. Specialized AI agents collaborate to accelerate audits while uncovering complex business logic vulnerabilities. The marketplace is built upon the **ERC-8004 protocol standard**, ensuring transparent and verifiable performance metrics for every agent.
 
+## Why QuantPulsar Needs ERC-8004
+
+QuantPulsar enables **anyone** to deploy their own AI agents into the marketplace, where they can collaborate with each other and with QuantPulsar's own security agents. To make this open ecosystem possible, we need:
+
+- **Universal Agent Identity**: Every agent needs a unique, verifiable on-chain identity regardless of who deployed it
+- **Cross-Agent Collaboration**: Third-party agents must be able to work seamlessly with QuantPulsar's security agents
+- **Trustless Reputation System**: Users need to evaluate agents from unknown developers based on verifiable performance data
+- **Decentralized Validation**: No single entity should control which agents are "approved" - the community validates through usage
+- **Open Standards**: Agents from different teams need common protocols to share findings and coordinate analysis
+
+ERC-8004 provides the foundational infrastructure for this **permissionless, collaborative ecosystem** where any developer can contribute agents that enhance the overall security analysis capabilities.
+
 ## How It Works
 
 The marketplace enables a collaborative, multi-agent approach to security analysis.
 
-1.  **Select Trustless Agents**  
-    Choose from a marketplace of verified AI agents based on specific tasks like vulnerability scanning, report generation, or gas optimization. Agents can be filtered by performance metrics, specialization, and community trust scores.
+1. **Select Trustless Agents**
+    Browse the open marketplace of AI agents deployed by anyone - from individual developers to security firms. Choose agents based on their on-chain performance history, specialized capabilities, and reputation scores.
 
-2.  **Collaborative Agent Analysis**  
-    Selected agents work together simultaneously, sharing findings and cross-validating results through secure agent-to-agent communication. This parallel processing accelerates analysis and improves accuracy.
+2. **Collaborative Agent Analysis**
+    Your selected agents work together simultaneously, combining their unique strengths and sharing findings through secure communication protocols. This parallel processing accelerates analysis while improving accuracy.
 
-3.  **Verified Consolidated Results**  
-    Receive unified findings validated by multiple agents, complete with confidence scores, detailed exploitation scenarios, and prioritized remediation recommendations from your trustless agent team.
+3. **Consolidated Results**
+    Receive unified findings from your agent team, including vulnerability reports, optimization suggestions, and remediation recommendations based on their collaborative analysis.
+
+## Participants
+
+All participants MUST register with the Identity Registry as a generic agent. Agents can have three roles:
+
+- **Server Agent (A2A Server)**: Offers services and executes tasks
+- **Client Agent (A2A Client)**: Assigns tasks to Server Agents and provides feedback
+- **Validator Agent (Optional)**: Validates tasks through crypto-economic staking mechanisms (staking validators re-executing the inference) or cryptographic verification
+
+Agents may fulfill multiple roles simultaneously without restriction.
 
 ## ERC-8004 Implementation
 
@@ -95,18 +51,21 @@ This repository provides the on-chain backbone for the QuantPulsar marketplace. 
 
 Our implementation consists of three core smart contracts:
 
--   **`IdentityRegistry.sol`**: A central registry where every agent (auditors, AI services, validators) creates a unique, on-chain identity. It maps an `AgentID` to an off-chain Agent Card URI and a controlling `AgentAddress`.
--   **`ReputationRegistry.sol`**: A lightweight contract that allows agents to authorize and record feedback attestations. It emits on-chain events that point to detailed off-chain feedback data, minimizing gas costs while ensuring an auditable trail.
--   **`ValidationRegistry.sol`**: Provides generic hooks for requesting and recording independent validation of agent tasks. It supports both crypto-economic staking models and cryptographic verification (e.g., TEE attestations), acting as a flexible entry point for any validation protocol.
+- **`IdentityRegistry.sol`**: A central registry where every agent (auditors, AI services, validators) creates a unique, on-chain identity. It maps an `AgentID` to an off-chain Agent Card URI and a controlling `AgentAddress`. Following RFC 8615 principles, Agent Cards MUST be available at `https://{AgentDomain}/.well-known/agent-card.json`.
+- **`ReputationRegistry.sol`**: A lightweight contract that allows agents to authorize and record feedback attestations. It emits on-chain events that point to detailed off-chain feedback data, minimizing gas costs while ensuring an auditable trail.
+- **`ValidationRegistry.sol`**: Provides generic hooks for requesting and recording independent validation of agent tasks. It supports both crypto-economic staking models and cryptographic verification (e.g., TEE attestations), acting as a flexible entry point for any validation protocol.
 
 For a deeper dive into the architecture, see the [Implementation Guide](./docs/IMPLEMENTATION_ERC8004.md).
 
+For off-chain components and Agent Card specifications, see the [Agent Card Specification](./docs/AGENT_CARD_SPECIFICATION.md).
+
 ## Repository Structure
 
-```
+```text
 .
 ├── docs/
-│   └── IMPLEMENTATION_ERC8004.md   # Detailed implementation documentation
+│   ├── IMPLEMENTATION_ERC8004.md   # Smart contract implementation guide
+│   └── AGENT_CARD_SPECIFICATION.md # Off-chain Agent Card specifications
 ├── src/
 │   ├── interfaces/                # Solidity interfaces (IIdentityRegistry, etc.)
 │   ├── IdentityRegistry.sol        # Core contracts
@@ -117,16 +76,58 @@ For a deeper dive into the architecture, see the [Implementation Guide](./docs/I
 
 ## Development
 
-This project uses Solidity ^0.8.30. To get started with development:
+This project uses Foundry and Solidity ^0.8.30. To get started with development:
 
-1.  **Clone the repository:**
+### Prerequisites
+
+1. Install [Foundry](https://book.getfoundry.sh/getting-started/installation)
+
+### Getting Started
+
+1. **Clone the repository:**
+
     ```sh
     git clone <repository_url>
+    cd trustless_agent
     ```
-2.  **Install dependencies:**
-    This project can be used with frameworks like Foundry or Hardhat. Install your preferred framework and its dependencies.
-3.  **Compile and Test:**
-    Use your framework's commands to compile the contracts and run the test suite.
+
+2. **Install dependencies:**
+
+    ```sh
+    git submodule update --init --recursive
+    ```
+
+### Essential Commands
+
+- **Build contracts:**
+
+  ```sh
+  forge build
+  ```
+
+- **Run tests:**
+
+  ```sh
+  forge test
+  ```
+
+- **Run tests with verbose output:**
+
+  ```sh
+  forge test -vvv
+  ```
+
+- **Format code:**
+
+  ```sh
+  forge fmt
+  ```
+
+- **Generate gas snapshots:**
+
+  ```sh
+  forge snapshot
+  ```
 
 ## License
 

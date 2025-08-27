@@ -7,6 +7,9 @@ import {IIdentityRegistry} from "./interfaces/IIdentityRegistry.sol";
  * @title IdentityRegistry
  * @author ERC-8004 Authors, azanux
  * @dev Concrete implementation of the ERC-8004 Identity Registry.
+ * 
+ * AgentDomain Requirements:
+ * Following RFC 8615 principles, an Agent Card MUST be available at https://{AgentDomain}/.well-known/agent-card.json
  */
 contract IdentityRegistry is IIdentityRegistry {
     uint256 private _agentIdCounter;
@@ -16,7 +19,7 @@ contract IdentityRegistry is IIdentityRegistry {
     mapping(address => uint256) private _addressToAgentId;
 
     /// @inheritdoc IIdentityRegistry
-    function registerAgent(string calldata agentDomain, address agentAddress) external returns (uint256 agentId) {
+    function newAgent(string calldata agentDomain, address agentAddress) external returns (uint256 agentId) {
         require(bytes(agentDomain).length > 0, "IdentityRegistry: Domain cannot be empty");
         require(agentAddress != address(0), "IdentityRegistry: Address cannot be zero");
         require(_addressToAgentId[agentAddress] == 0, "IdentityRegistry: Address already registered");
@@ -45,7 +48,7 @@ contract IdentityRegistry is IIdentityRegistry {
 
         // Update domain if a new one is provided
         if (bytes(newAgentDomain).length > 0) {
-            require(_domainToAgentId[newAgentDomain] == 0, "IdentityRegistry: New domain is already taken");
+            require(_domainToAgentId[newAgentDomain] == 0, "IdentityRegistry: newAgent domain is already taken");
             delete _domainToAgentId[agent.domain];
             agent.domain = newAgentDomain;
             _domainToAgentId[newAgentDomain] = agentId;
@@ -53,7 +56,7 @@ contract IdentityRegistry is IIdentityRegistry {
 
         // Update address if a new one is provided
         if (newAgentAddress != address(0)) {
-            require(_addressToAgentId[newAgentAddress] == 0, "IdentityRegistry: New address is already taken");
+            require(_addressToAgentId[newAgentAddress] == 0, "IdentityRegistry: newAgent address is already taken");
             delete _addressToAgentId[agent.owner];
             agent.owner = newAgentAddress;
             _addressToAgentId[newAgentAddress] = agentId;
@@ -66,12 +69,14 @@ contract IdentityRegistry is IIdentityRegistry {
     /// @inheritdoc IIdentityRegistry
     function getAgent(uint256 agentId) external view returns (uint256, string memory, address) {
         Agent storage agent = _agents[agentId];
+        require(agent.id != 0, "IdentityRegistry: Agent does not exist");
         return (agent.id, agent.domain, agent.owner);
     }
 
     /// @inheritdoc IIdentityRegistry
     function resolveByDomain(string calldata agentDomain) external view returns (uint256, string memory, address) {
         uint256 agentId = _domainToAgentId[agentDomain];
+        require(agentId != 0, "IdentityRegistry: Domain not found");
         Agent storage agent = _agents[agentId];
         return (agent.id, agent.domain, agent.owner);
     }
@@ -79,6 +84,7 @@ contract IdentityRegistry is IIdentityRegistry {
     /// @inheritdoc IIdentityRegistry
     function resolveByAddress(address agentAddress) external view returns (uint256, string memory, address) {
         uint256 agentId = _addressToAgentId[agentAddress];
+        require(agentId != 0, "IdentityRegistry: Address not found");
         Agent storage agent = _agents[agentId];
         return (agent.id, agent.domain, agent.owner);
     }
