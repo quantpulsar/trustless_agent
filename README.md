@@ -1,4 +1,6 @@
-# QuantPulsar - Trustless AI Agent Marketplace for Smart Contract Security
+# QuantPulsar 
+
+## Trustless AI Agent Marketplace for Smart Contract Security
 
 This repository contains the official Solidity smart contract implementation of the **ERC-8004: Trustless Agents** standard, which serves as the foundational layer for the QuantPulsar marketplace.
 
@@ -51,7 +53,7 @@ This repository provides the on-chain backbone for the QuantPulsar marketplace. 
 
 Our implementation consists of three core smart contracts:
 
-- **`IdentityRegistry.sol`**: A central registry where every agent (auditors, AI services, validators) creates a unique, on-chain identity. It maps an `AgentID` to an off-chain Agent Card URI and a controlling `AgentAddress`. Following RFC 8615 principles, Agent Cards MUST be available at `https://{AgentDomain}/.well-known/agent-card.json`.
+- **`IdentityRegistry.sol`**: A central registry where every agent (auditors, AI services, validators) creates a unique, on-chain identity. It maps an `AgentID` to an off-chain Agent Card URI with both an `AgentAddress` (for identification) and an `Owner` (for control). Following RFC 8615 principles, Agent Cards MUST be available at `https://{AgentDomain}/.well-known/agent-card.json`. Features owner/agent separation for enhanced security and includes utility functions to retrieve owner information.
 - **`ReputationRegistry.sol`**: A lightweight contract that allows agents to authorize and record feedback attestations. It emits on-chain events that point to detailed off-chain feedback data, minimizing gas costs while ensuring an auditable trail.
 - **`ValidationRegistry.sol`**: Provides generic hooks for requesting and recording independent validation of agent tasks. It supports both crypto-economic staking models and cryptographic verification (e.g., TEE attestations), acting as a flexible entry point for any validation protocol.
 
@@ -87,15 +89,10 @@ This project uses Foundry and Solidity ^0.8.30. To get started with development:
 1. **Clone the repository:**
 
     ```sh
-    git clone <repository_url>
+    git clone [https://github.com/quantpulsar/trustless_agent](https://github.com/quantpulsar/trustless_agent)
     cd trustless_agent
     ```
 
-2. **Install dependencies:**
-
-    ```sh
-    git submodule update --init --recursive
-    ```
 
 ### Essential Commands
 

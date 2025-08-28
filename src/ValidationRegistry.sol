@@ -11,7 +11,7 @@ import {IIdentityRegistry} from "./interfaces/IIdentityRegistry.sol";
  */
 contract ValidationRegistry is IValidationRegistry {
     // The duration for which a validation request remains pending (e.g., 1 hour).
-    uint256 public constant PENDING_REQUEST_TTL = 3600;
+    uint256 public constant PENDING_REQUEST_TTL = 3600; // TODO I am sure that 1 hour is enough
 
     IIdentityRegistry public immutable IDENTITY_REGISTRY;
 
@@ -35,6 +35,18 @@ contract ValidationRegistry is IValidationRegistry {
 
     /// @inheritdoc IValidationRegistry
     function requestValidation(uint256 agentValidatorId, uint256 agentServerId, bytes32 dataHash) external {
+        // Verify that msg.sender is the owner of the server agent
+        address serverOwner = IDENTITY_REGISTRY.getAgentOwner(agentServerId);
+        require(msg.sender == serverOwner, "ValidationRegistry: Only server agent owner can request validation");
+        
+        // Verify that the server agent has the SERVER role
+        require(IDENTITY_REGISTRY.hasRole(agentServerId, IIdentityRegistry.Role.SERVER), 
+                "ValidationRegistry: Server agent must have SERVER role");
+        
+        // Verify that the validator agent has the VALIDATOR role
+        require(IDENTITY_REGISTRY.hasRole(agentValidatorId, IIdentityRegistry.Role.VALIDATOR), 
+                "ValidationRegistry: Validator agent must have VALIDATOR role");
+        
         // Ensure the request does not already exist to prevent overwrites
         require(pendingRequests[dataHash].expirationTimestamp == 0, "ValidationRegistry: Request already exists");
         
@@ -61,6 +73,10 @@ contract ValidationRegistry is IValidationRegistry {
         
         // Ensure the caller is the designated validator
         require(msg.sender == validatorAddress, "ValidationRegistry: Not authorized validator");
+        
+        // Verify that the validator agent has the VALIDATOR role
+        require(IDENTITY_REGISTRY.hasRole(request.agentValidatorId, IIdentityRegistry.Role.VALIDATOR), 
+                "ValidationRegistry: Validator agent must have VALIDATOR role");
 
         uint256 agentValidatorId = request.agentValidatorId;
         uint256 agentServerId = request.agentServerId;
