@@ -34,7 +34,7 @@ contract IdentityRegistryTest is Test {
 
     function test_RegisterAgent_EmitsEvent() public {
         vm.expectEmit(true, true, false, true);
-        emit IIdentityRegistry.AgentRegistered(1, domain1, agent1);
+        emit IIdentityRegistry.AgentRegistered(1, domain1, agent1, agent1);
         
         vm.prank(agent1);
         registry.newAgent(domain1, agent1);
@@ -58,7 +58,7 @@ contract IdentityRegistryTest is Test {
     }
 
     function test_RevertWhen_ZeroAddress() public {
-        vm.expectRevert("IdentityRegistry: Address cannot be zero");
+        vm.expectRevert("IdentityRegistry: Agent address cannot be zero");
         vm.prank(agent1);
         registry.newAgent(domain1, address(0));
     }
@@ -67,7 +67,7 @@ contract IdentityRegistryTest is Test {
         vm.prank(agent1);
         registry.newAgent(domain1, agent1);
         
-        vm.expectRevert("IdentityRegistry: Address already registered");
+        vm.expectRevert("IdentityRegistry: Agent address already registered");
         vm.prank(agent1);
         registry.newAgent(domain2, agent1);
     }
@@ -92,7 +92,7 @@ contract IdentityRegistryTest is Test {
         uint256 agentId = registry.newAgent(domain1, agent1);
         
         vm.expectEmit(true, false, false, true);
-        emit IIdentityRegistry.AgentUpdated(agentId, domain2, agent1);
+        emit IIdentityRegistry.AgentUpdated(agentId, domain2, agent1, agent1);
         
         vm.prank(agent1);
         bool success = registry.updateAgent(agentId, domain2, address(0));
@@ -109,7 +109,7 @@ contract IdentityRegistryTest is Test {
         uint256 agentId = registry.newAgent(domain1, agent1);
         
         vm.expectEmit(true, false, false, true);
-        emit IIdentityRegistry.AgentUpdated(agentId, domain1, agent2);
+        emit IIdentityRegistry.AgentUpdated(agentId, domain1, agent2, agent1);
         
         vm.prank(agent1);
         bool success = registry.updateAgent(agentId, "", agent2);
