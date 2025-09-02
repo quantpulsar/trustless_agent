@@ -14,7 +14,9 @@ interface IValidationRegistry {
      * @param agentServerId The ID of the agent whose work is being validated.
      * @param dataHash A hash commitment to the off-chain data needed for validation.
      */
-    event ValidationRequested(uint256 indexed agentValidatorId, uint256 indexed agentServerId, bytes32 indexed dataHash);
+    event ValidationRequested(
+        uint256 indexed agentValidatorId, uint256 indexed agentServerId, bytes32 indexed dataHash
+    );
 
     /**
      * @dev Emitted when a validator submits a response for a validation request.
@@ -23,7 +25,9 @@ interface IValidationRegistry {
      * @param dataHash The hash commitment of the validated data.
      * @param response The result of the validation (a value between 0 and 100).
      */
-    event ValidationResponded(uint256 indexed agentValidatorId, uint256 indexed agentServerId, bytes32 indexed dataHash, uint8 response);
+    event ValidationResponded(
+        uint256 indexed agentValidatorId, uint256 indexed agentServerId, bytes32 indexed dataHash, uint8 response
+    );
 
     /**
      * @dev Submits a request for a task to be validated.

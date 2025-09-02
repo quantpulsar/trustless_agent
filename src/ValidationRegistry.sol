@@ -38,18 +38,22 @@ contract ValidationRegistry is IValidationRegistry {
         // Verify that msg.sender is the owner of the server agent
         address serverOwner = IDENTITY_REGISTRY.getAgentOwner(agentServerId);
         require(msg.sender == serverOwner, "ValidationRegistry: Only server agent owner can request validation");
-        
+
         // Verify that the server agent has the SERVER role
-        require(IDENTITY_REGISTRY.hasRole(agentServerId, IIdentityRegistry.Role.SERVER), 
-                "ValidationRegistry: Server agent must have SERVER role");
-        
+        require(
+            IDENTITY_REGISTRY.hasRole(agentServerId, IIdentityRegistry.Role.SERVER),
+            "ValidationRegistry: Server agent must have SERVER role"
+        );
+
         // Verify that the validator agent has the VALIDATOR role
-        require(IDENTITY_REGISTRY.hasRole(agentValidatorId, IIdentityRegistry.Role.VALIDATOR), 
-                "ValidationRegistry: Validator agent must have VALIDATOR role");
-        
+        require(
+            IDENTITY_REGISTRY.hasRole(agentValidatorId, IIdentityRegistry.Role.VALIDATOR),
+            "ValidationRegistry: Validator agent must have VALIDATOR role"
+        );
+
         // Ensure the request does not already exist to prevent overwrites
         require(pendingRequests[dataHash].expirationTimestamp == 0, "ValidationRegistry: Request already exists");
-        
+
         pendingRequests[dataHash] = PendingValidation({
             agentValidatorId: agentValidatorId,
             agentServerId: agentServerId,
@@ -62,7 +66,7 @@ contract ValidationRegistry is IValidationRegistry {
     /// @inheritdoc IValidationRegistry
     function submitValidationResponse(bytes32 dataHash, uint8 response) external {
         PendingValidation storage request = pendingRequests[dataHash];
-        
+
         require(request.expirationTimestamp != 0, "ValidationRegistry: Request does not exist");
         require(block.timestamp <= request.expirationTimestamp, "ValidationRegistry: Request expired");
         require(response <= 100, "ValidationRegistry: Response must be between 0 and 100");
@@ -70,20 +74,22 @@ contract ValidationRegistry is IValidationRegistry {
         // Resolve the validator's address from the IdentityRegistry
         (,, address validatorAddress) = IDENTITY_REGISTRY.getAgent(request.agentValidatorId);
         require(validatorAddress != address(0), "ValidationRegistry: Validator not found in registry");
-        
+
         // Ensure the caller is the designated validator
         require(msg.sender == validatorAddress, "ValidationRegistry: Not authorized validator");
-        
+
         // Verify that the validator agent has the VALIDATOR role
-        require(IDENTITY_REGISTRY.hasRole(request.agentValidatorId, IIdentityRegistry.Role.VALIDATOR), 
-                "ValidationRegistry: Validator agent must have VALIDATOR role");
+        require(
+            IDENTITY_REGISTRY.hasRole(request.agentValidatorId, IIdentityRegistry.Role.VALIDATOR),
+            "ValidationRegistry: Validator agent must have VALIDATOR role"
+        );
 
         uint256 agentValidatorId = request.agentValidatorId;
         uint256 agentServerId = request.agentServerId;
 
         // Clean up state to prevent re-use and save gas
         delete pendingRequests[dataHash];
-        
+
         emit ValidationResponded(agentValidatorId, agentServerId, dataHash, response);
     }
 }

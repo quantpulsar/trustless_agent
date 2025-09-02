@@ -6,13 +6,13 @@ pragma solidity ^0.8.30;
  * @author ERC-8004 Authors, azanux
  * @dev Interface for the ERC-8004 Identity Registry.
  * Manages agent identities, providing a single on-chain entry point for registration and discovery.
- * 
+ *
  * Owner/Agent Architecture:
  * - AgentAddress: The EVM address identifying the agent (used for identification)
  * - Owner: The address that controls the agent (authorized to make updates)
  * - On registration, msg.sender must equal agentAddress, and becomes the owner
  * - Updates are authorized by the owner, not the agentAddress
- * 
+ *
  * AgentDomain Requirements:
  * Following RFC 8615 principles, an Agent Card MUST be available at https://{AgentDomain}/.well-known/agent-card.json
  */
@@ -22,9 +22,10 @@ interface IIdentityRegistry {
      * Agents can have multiple roles simultaneously using bitmap.
      */
     enum Role {
-        SERVER,     // = 0 → bitmap: 001 (value 1) - Offers services and executes tasks
-        CLIENT,     // = 1 → bitmap: 010 (value 2) - Assigns tasks and provides feedback  
-        VALIDATOR   // = 2 → bitmap: 100 (value 4) - Validates tasks through crypto-economic or cryptographic verification
+        SERVER, // = 0 → bitmap: 001 (value 1) - Offers services and executes tasks
+        CLIENT, // = 1 → bitmap: 010 (value 2) - Assigns tasks and provides feedback
+        VALIDATOR // = 2 → bitmap: 100 (value 4) - Validates tasks through crypto-economic or cryptographic verification
+
     }
 
     /**
@@ -51,7 +52,9 @@ interface IIdentityRegistry {
      * @param agentAddress The agent's address.
      * @param owner The agent's owner address.
      */
-    event AgentRegistered(uint256 indexed agentId, string agentDomain, address indexed agentAddress, address indexed owner); // TODO we should add the event to the specification
+    event AgentRegistered(
+        uint256 indexed agentId, string agentDomain, address indexed agentAddress, address indexed owner
+    ); // TODO we should add the event to the specification
 
     /**
      * @dev Emitted when an agent's details are updated.
@@ -60,7 +63,9 @@ interface IIdentityRegistry {
      * @param newAgentAddress The new address for the agent.
      * @param newOwner The new owner address for the agent.
      */
-    event AgentUpdated(uint256 indexed agentId, string newAgentDomain, address indexed newAgentAddress, address indexed newOwner); // TODO we should add the event to the specification
+    event AgentUpdated(
+        uint256 indexed agentId, string newAgentDomain, address indexed newAgentAddress, address indexed newOwner
+    ); // TODO we should add the event to the specification
 
     /**
      * @dev Emitted when an agent's roles are updated.
@@ -88,11 +93,9 @@ interface IIdentityRegistry {
      * @param newAgentAddress The new address. If address(0), the address is not changed.
      * @return success A boolean indicating if the update was successful.
      */
-    function updateAgent(
-        uint256 agentId,
-        string calldata newAgentDomain,
-        address newAgentAddress
-    ) external returns (bool success);
+    function updateAgent(uint256 agentId, string calldata newAgentDomain, address newAgentAddress)
+        external
+        returns (bool success);
 
     /**
      * @dev Retrieves an agent's details by its ID.

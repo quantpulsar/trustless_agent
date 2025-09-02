@@ -7,19 +7,19 @@ import {IIdentityRegistry} from "./interfaces/IIdentityRegistry.sol";
  * @title IdentityRegistry
  * @author ERC-8004 Authors, azanux
  * @dev Concrete implementation of the ERC-8004 Identity Registry with owner/agent separation.
- * 
+ *
  * Architecture:
  * - AgentAddress: The EVM address identifying the agent (used for identification)
  * - Owner: The address that controls the agent (authorized to make updates)
  * - On registration, msg.sender must equal agentAddress, and becomes the owner
  * - Updates are authorized by the owner, not the agentAddress
- * 
+ *
  * AgentDomain Requirements:
  * Following RFC 8615 principles, an Agent Card MUST be available at https://{AgentDomain}/.well-known/agent-card.json
- * 
+ *
  * Additional Features:
  * - getAgentOwner(agentId): Get owner by agent ID
- * - getOwnerByAgentAddress(agentAddress): Get owner by agent address  
+ * - getOwnerByAgentAddress(agentAddress): Get owner by agent address
  * - getOwnerByDomain(agentDomain): Get owner by agent domain
  */
 contract IdentityRegistry is IIdentityRegistry {
@@ -50,11 +50,10 @@ contract IdentityRegistry is IIdentityRegistry {
     }
 
     /// @inheritdoc IIdentityRegistry
-    function updateAgent(
-        uint256 agentId,
-        string calldata newAgentDomain,
-        address newAgentAddress
-    ) external returns (bool success) {
+    function updateAgent(uint256 agentId, string calldata newAgentDomain, address newAgentAddress)
+        external
+        returns (bool success)
+    {
         Agent storage agent = _agents[agentId];
         require(agent.id != 0, "IdentityRegistry: Agent does not exist");
         require(msg.sender == agent.owner, "IdentityRegistry: Not authorized"); // TODO may be replace this part by hasAuthorized modifier
@@ -142,10 +141,10 @@ contract IdentityRegistry is IIdentityRegistry {
         Agent storage agent = _agents[agentId];
         require(agent.id != 0, "IdentityRegistry: Agent does not exist");
         require(msg.sender == agent.owner, "IdentityRegistry: Only owner can modify roles");
-        
+
         uint8 roleBit = uint8(1 << uint8(role));
         agent.roles |= roleBit;
-        
+
         emit AgentRolesUpdated(agentId, agent.roles);
     }
 
@@ -154,10 +153,10 @@ contract IdentityRegistry is IIdentityRegistry {
         Agent storage agent = _agents[agentId];
         require(agent.id != 0, "IdentityRegistry: Agent does not exist");
         require(msg.sender == agent.owner, "IdentityRegistry: Only owner can modify roles");
-        
+
         uint8 roleBit = uint8(1 << uint8(role));
         agent.roles &= ~roleBit;
-        
+
         emit AgentRolesUpdated(agentId, agent.roles);
     }
 
@@ -165,7 +164,7 @@ contract IdentityRegistry is IIdentityRegistry {
     function hasRole(uint256 agentId, Role role) external view returns (bool) {
         Agent storage agent = _agents[agentId];
         require(agent.id != 0, "IdentityRegistry: Agent does not exist");
-        
+
         uint8 roleBit = uint8(1 << uint8(role));
         return (agent.roles & roleBit) != 0;
     }
@@ -183,9 +182,9 @@ contract IdentityRegistry is IIdentityRegistry {
         require(agent.id != 0, "IdentityRegistry: Agent does not exist");
         require(msg.sender == agent.owner, "IdentityRegistry: Only owner can modify roles");
         require(roles <= 7, "IdentityRegistry: Invalid roles bitmap");
-        
+
         agent.roles = roles;
-        
+
         emit AgentRolesUpdated(agentId, roles);
     }
 }

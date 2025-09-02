@@ -31,18 +31,23 @@ contract ReputationRegistry is IReputationRegistry {
         require(msg.sender == serverOwner, "ReputationRegistry: Only server agent owner can authorize feedback");
 
         // Verify that the server agent has the SERVER role
-        require(identityRegistry.hasRole(agentServerId, IIdentityRegistry.Role.SERVER), 
-                "ReputationRegistry: Server agent must have SERVER role");
-        
+        require(
+            identityRegistry.hasRole(agentServerId, IIdentityRegistry.Role.SERVER),
+            "ReputationRegistry: Server agent must have SERVER role"
+        );
+
         // Verify that the client agent has the CLIENT role
-        require(identityRegistry.hasRole(agentClientId, IIdentityRegistry.Role.CLIENT), 
-                "ReputationRegistry: Client agent must have CLIENT role");
+        require(
+            identityRegistry.hasRole(agentClientId, IIdentityRegistry.Role.CLIENT),
+            "ReputationRegistry: Client agent must have CLIENT role"
+        );
 
         _feedbackAuthCounter++;
         uint256 counter = _feedbackAuthCounter;
-        
+
         // Generate feedbackAuthId using standard Solidity instead of assembly
-        bytes32 feedbackAuthId = keccak256(abi.encodePacked(block.chainid, address(this), counter, agentClientId, agentServerId));
+        bytes32 feedbackAuthId =
+            keccak256(abi.encodePacked(block.chainid, address(this), counter, agentClientId, agentServerId));
 
         emit AuthFeedback(agentClientId, agentServerId, feedbackAuthId);
     }
