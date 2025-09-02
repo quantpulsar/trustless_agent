@@ -89,7 +89,7 @@ This project uses Foundry and Solidity ^0.8.30. To get started with development:
 1. **Clone the repository:**
 
     ```sh
-    git clone [https://github.com/quantpulsar/trustless_agent](https://github.com/quantpulsar/trustless_agent)
+    git clone https://github.com/quantpulsar/trustless_agent
     cd trustless_agent
     ```
 
